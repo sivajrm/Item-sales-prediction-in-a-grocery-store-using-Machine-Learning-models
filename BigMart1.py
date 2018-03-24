@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+from sklearn.linear_model import LinearRegression
+from sklearn import cross_validation, metrics
 
 #Function to return number of missing values in the column provided
 def num_missing(x):
@@ -209,8 +211,6 @@ print ('\n****************************************************\n')
 #Define target and ID columns:
 target = 'Item_Outlet_Sales'
 IDcol = ['Item_Identifier','Outlet_Identifier']
-
-from sklearn import cross_validation, metrics
 def modelfit(alg, dtrain, dtest, predictors, target, IDcol, filename):
     #Fit the algorithm on the data
     alg.fit(dtrain[predictors], dtrain[target])
@@ -235,7 +235,6 @@ def modelfit(alg, dtrain, dtest, predictors, target, IDcol, filename):
     submission = pd.DataFrame({ x: dtest[x] for x in IDcol})
     submission.to_csv(filename, index=False)
     
-from sklearn.linear_model import LinearRegression
 
 predictors = [x for x in train.columns if x not in [target]+IDcol]
 # print predictors
@@ -259,48 +258,57 @@ test['LinearRegression'] = y_pred
 #Performance metrics
 print('Coefficients: \n',regr.coef_)
 print("Mean squared error: %.2f" % metrics.mean_squared_error(test['Item_Outlet_Sales'],test['LinearRegression']))
-print("Root MSE          : ",np.sqrt(metrics.mean_squared_error(test['Item_Outlet_Sales'],test['LinearRegression'])))
+print("Root MSE          :",np.sqrt(metrics.mean_squared_error(test['Item_Outlet_Sales'],test['LinearRegression'])))
 print('Variance r2 score : %.2f' % metrics.r2_score(test['Item_Outlet_Sales'],test['LinearRegression']))
 cv_score = cross_validation.cross_val_score(regr,train[predictors], train[target], cv=5, scoring='neg_mean_squared_error')
 cv_score = np.sqrt(np.abs(cv_score))
 print("CV:",cv_score);
 
 
-'''
+
 #Scatter plot to visualise the output
 print ('\n****************************************************\n')
 print ('\n************ Item_Weight vs Outlet Sales **********************\n')
 print ('\n****************************************************\n')
 plt.scatter(test['Item_Weight'], test[target],  color='black')
 plt.scatter(test['Item_Weight'], test['LinearRegression'],  color='red')
+plt.xticks()
+plt.yticks()
+plt.show()
 
-'''
-'''
 print ('\n****************************************************\n')
 print ('\n************ Item_Identifier vs Outlet Sales **********************\n')
 print ('\n****************************************************\n')
 plt.scatter(test['Item_Identifier'], test[target],  color='black')
 plt.scatter(test['Item_Identifier'], test['LinearRegression'],  color='red')
-'''
+plt.xticks()
+plt.yticks()
+plt.show()
+
 print ('\n****************************************************\n')
 print ('\n************ Item_Visibility vs Outlet Sales **********************\n')
 print ('\n****************************************************\n')
 plt.scatter(test['Item_Visibility'], test[target],  color='black')
 plt.scatter(test['Item_Visibility'], test['LinearRegression'],  color='red')
-'''
+plt.xticks()
+plt.yticks()
+plt.show()
+
 print ('\n****************************************************\n')
 print ('\n************ Outlet_Age vs Outlet Sales **********************\n')
 print ('\n****************************************************\n')
 plt.scatter(test['Outlet_Years'], test[target],  color='black')
 plt.scatter(test['Outlet_Years'], test['LinearRegression'],  color='red')
-'''
-'''
+plt.xticks()
+plt.yticks()
+plt.show()
+
 print ('\n****************************************************\n')
 print ('\n************ Item_MRP vs Outlet Sales **********************\n')
 print ('\n****************************************************\n')
 plt.scatter(test['Item_MRP'], test[target],  color='black')
 plt.scatter(test['Item_MRP'], test['LinearRegression'],  color='red')
-'''
+
 #plt.plot(test[predictors], test['preds'], color='blue', linewidth=3)
 plt.xticks()
 plt.yticks()
@@ -321,7 +329,7 @@ IDcol.append(target)
 test['Randomforest'] = y_pred
 #Performance metrics
 print("Mean squared error: %.2f" % metrics.mean_squared_error(test['Item_Outlet_Sales'],test['Randomforest']))
-print("Root MSE          : ",np.sqrt(metrics.mean_squared_error(test['Item_Outlet_Sales'],test['Randomforest'])))
+print("Root MSE          :",np.sqrt(metrics.mean_squared_error(test['Item_Outlet_Sales'],test['Randomforest'])))
 print('Variance r2 score : %.2f' % metrics.r2_score(test['Item_Outlet_Sales'],test['Randomforest']))
 cv_score = cross_validation.cross_val_score(alg5,train[predictors], train[target], cv=5, scoring='neg_mean_squared_error')
 cv_score = np.sqrt(np.abs(cv_score))
